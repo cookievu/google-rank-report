@@ -11,22 +11,26 @@ const search = async (google, keyword) => {
 };
 
 const searchRank = async (google, keyword, domain) => {
-  const links = await search(google, keyword);
-  const totalLinks = links.length;
+  const result = {
+    keyword,
+    domain,
+    page: null,
+    index: null,
+  };
+  try {
+    const links = await search(google, keyword);
+    const totalLinks = links.length;
 
-  for (var i = 0; i < totalLinks; ++i) {
-    const link = links[i];
-    if (link.href.includes(domain)) {
-      return {
-        keyword,
-        domain,
-        page: link.title,
-        url: link.href,
-        index: i + 1,
-      };
+    for (var i = 0; i < totalLinks; ++i) {
+      const link = links[i];
+      if (link.href.includes(domain)) {
+        result.page = link.title;
+        result.url = link.href;
+        result.index = i + 1;
+      }
     }
-  }
-  return null;
+  } catch (err) {}
+  return result;
 };
 
 module.exports = {
